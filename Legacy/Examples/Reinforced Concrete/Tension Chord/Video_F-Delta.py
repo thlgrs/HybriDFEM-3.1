@@ -15,10 +15,16 @@ mpl.rcParams['font.family'] = 'serif'
 mpl.rcParams['font.serif'] = ['Computer Modern Roman']  # Example of a LaTeX font
 mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath, amssymb, amsfonts}'
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
+
+from Legacy.Objects import Structure as st
 
 D = 14e-3
 Node = 149
@@ -73,7 +79,10 @@ def plot_F_Delta(U, P, save=None, compare=False):
 
 # St.plot_structure(scale=500, plot_cf=False, plot_supp=False)
 
-save_path = os.path.dirname(os.path.abspath(__file__)) + f'/Frames_F_Delta_{D}'
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 if not pathlib.Path(save_path).exists():
     pathlib.Path(save_path).mkdir(exist_ok=True)

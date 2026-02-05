@@ -12,8 +12,14 @@ import sys, math, copy, os
 import numpy as np
 import pathlib
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
+
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
 
 plt.rcParams.update({
     "text.usetex": True,  # Use LaTeX

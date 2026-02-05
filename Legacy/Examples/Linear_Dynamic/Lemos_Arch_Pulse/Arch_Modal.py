@@ -5,13 +5,19 @@ import sys
 import pathlib
 import matplotlib.pyplot as plt
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Contact as cont
-import ContactPair as cp
-import Surface as surf
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Contact as cont
+from Legacy.Objects import ContactPair as cp
+from Legacy.Objects import Surface as surf
 
 plt.rcParams.update({
     "text.usetex": True,  # Use LaTeX
@@ -19,7 +25,10 @@ plt.rcParams.update({
     "font.size": 15  # Adjust font size
 })
 
-save_path = os.path.dirname(os.path.abspath(__file__))
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 kn = 20e9
 ks = 0.4 * kn
@@ -180,7 +189,10 @@ def make_plot(U_t, time, saveto):
     plt.close()
 
 
-save_path = os.path.dirname(os.path.abspath(__file__)) + '/Frames'
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 if not pathlib.Path(save_path).exists():
     pathlib.Path(save_path).mkdir(exist_ok=True)

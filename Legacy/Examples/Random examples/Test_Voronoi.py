@@ -8,8 +8,14 @@ from shapely.geometry import Polygon, Point, LineString
 from shapely.ops import unary_union, polygonize
 from scipy.spatial import Voronoi, voronoi_plot_2d
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
+
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
 
 points = [(0, 0), (0, 1), (1, 1), (1, 0), (.5, .5)]
 

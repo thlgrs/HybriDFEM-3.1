@@ -14,7 +14,7 @@ import os
 import matplotlib.pyplot as plt
 from copy import deepcopy
 import scipy as sc
-import Spring as sp
+from . import Spring as sp
 from scipy.optimize import root
 
 

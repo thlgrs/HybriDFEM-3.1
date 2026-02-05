@@ -8,10 +8,16 @@ import re
 import sys
 import pathlib
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
+
+from Legacy.Objects import Structure
 
 plt.rcParams.update({
     "text.usetex": True,  # Use LaTeX

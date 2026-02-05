@@ -24,8 +24,14 @@ import sys
 import pathlib
 import numpy as np
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
+
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
 
 files = []
 
@@ -40,7 +46,10 @@ with h5py.File(file, 'r') as hf:
     U_conv = hf['U_conv'][3 * Node, :last_conv] * 1000
     Time = hf['Time'][:last_conv]
 
-save_path = os.path.dirname(os.path.abspath(__file__)) + '/Frames'
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 data = np.loadtxt("fig-12/acn103-pp15-s5-h7.txt", skiprows=2)
 t_ls, d_ls = data[:, 0], data[:, 1] * 1000

@@ -11,13 +11,22 @@ import h5py
 import sys
 import pathlib
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Material as mat
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
 
-save_path = os.path.dirname(os.path.abspath(__file__))
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Material as mat
+
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 L = 4
 N1 = np.array([0, 0], dtype=float)

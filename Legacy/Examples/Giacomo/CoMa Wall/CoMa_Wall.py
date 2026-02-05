@@ -6,16 +6,25 @@ import h5py
 import sys
 import pathlib
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Material as mat
-import Surface as surf
-import Contact as ct
-import ContactPair as cp
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
 
-save_path = os.getcwd()
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Material as mat
+from Legacy.Objects import Surface as surf
+from Legacy.Objects import Contact as ct
+from Legacy.Objects import ContactPair as cp
+
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 E_URM = 0.2 * 5.46e9
 nu_URM = 0.2
@@ -295,4 +304,4 @@ St.solve_dyn_nonlinear(15, dt_new, Meth=Meth, lmbda=None, filename=f'CoMa_{pga}'
 
 St.plot_structure(scale=1, plot_forces=True, plot_cf=False)
 
-St.save_structure(filename='Test_1_CoMa_wall')
+St.save_structure(filename=os.path.join(save_path, 'Test_1_CoMa_wall'))

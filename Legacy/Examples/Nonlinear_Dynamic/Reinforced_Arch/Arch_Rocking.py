@@ -5,13 +5,22 @@ import sys
 import pathlib
 import matplotlib.pyplot as plt
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Contact as cont
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
 
-save_path = os.path.dirname(os.path.abspath(__file__))
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Contact as cont
+
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 Meth = ['HHT', 0.3]
 # Meth = 'CDM'
@@ -92,7 +101,7 @@ St.set_damping_properties(xsi=0.00, damp_type='RAYLEIGH')
 St.solve_dyn_nonlinear(10, 1e-3, Meth=Meth, lmbda=lmbda, filename=f't_p={t_p}_a={a}')
 St.plot_structure(scale=1, plot_forces=False, plot_cf=False)
 
-St.save_structure(filename='Dimitri_Arch')
+St.save_structure(filename=os.path.join(save_path, 'Dimitri_Arch'))
 # #%% Debug
 
 # # plt.plot()

@@ -18,14 +18,20 @@ def reload_modules():
     importlib.reload(ct)
 
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Surface as surf
-import Contact as ct
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
 
-reload_modules()
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Surface as surf
+from Legacy.Objects import Contact as ct
+
+# reload_modules()  # Uncomment if needed during development
 
 N1 = np.array([0, 0])
 
@@ -166,8 +172,6 @@ print(St.nb_dof_free)
 # %% 
 import pickle
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
 files = []
 

@@ -20,10 +20,16 @@ HEADER_COMMENT = """# ==========================================================
 # Import mapping: old import -> new import
 IMPORT_MAP = {
     r'^import Structure as st$': 'from Legacy.Objects import Structure as st',
-    r'^import ConstitutiveLaw as mat$': 'from Legacy.Objects import ConstitutiveLaw as mat',
+    r'^import Structure$': 'from Legacy.Objects import Structure',
+    r'^import ConstitutiveLaw as mat$': 'from Legacy.Objects import Material as mat',
+    r'^import Material as mat$': 'from Legacy.Objects import Material as mat',
+    r'^import Material as mt$': 'from Legacy.Objects import Material as mt',
     r'^import Surface as surf$': 'from Legacy.Objects import Surface as surf',
     r'^import Contact as ct$': 'from Legacy.Objects import Contact as ct',
+    r'^import Contact as cont$': 'from Legacy.Objects import Contact as cont',
     r'^import ContactPair as cp$': 'from Legacy.Objects import ContactPair as cp',
+    r'^import Spring as sp$': 'from Legacy.Objects import Spring as sp',
+    r'^import Block as bl$': 'from Legacy.Objects import Block as bl',
 }
 
 # Setup code for output directory
@@ -70,18 +76,22 @@ def fix_file_content(content: str, filepath: str) -> Tuple[str, bool]:
 
     # Track if we've already added the header
     header_added = False
+    
+    # Check if header is already present
+    if "# FIXED: Removed hard-coded paths" in content:
+        header_added = True
 
     while i < len(lines):
         line = lines[i]
 
-        # Skip if already fixed
+        # Skip if already fixed (though we handle header_added above, this skips the lines themselves)
         if '# FIXED: Removed hard-coded paths' in line:
             new_lines.append(line)
             i += 1
             continue
 
         # Replace hard-coded path block
-        if "pathlib.Path('C:/Users/" in line or 'pathlib.Path("C:/Users/' in line:
+        if ("pathlib.Path('C:/Users/" in line or 'pathlib.Path("C:/Users/' in line) and not line.strip().startswith('#'):
             if not header_added:
                 new_lines.append('')
                 new_lines.extend(HEADER_COMMENT.split('\n'))
@@ -94,7 +104,7 @@ def fix_file_content(content: str, filepath: str) -> Tuple[str, bool]:
             continue
 
         # Replace sys.path.append if not already caught
-        if 'sys.path.append' in line and 'HybriDFEM' in line:
+        if 'sys.path.append' in line and ('HybriDFEM' in line or 'Objects' in line) and not line.strip().startswith('#'):
             # Already handled by previous block or standalone
             if not header_added:
                 new_lines.append('')
@@ -124,6 +134,13 @@ def fix_file_content(content: str, filepath: str) -> Tuple[str, bool]:
             modified = True
             i += 1
             continue
+            
+        # Fix: Comment out folder = ... if it wasn't caught by the exact C:/Users check but clearly defines a path for sys.path
+        if stripped.startswith('folder = pathlib.Path(') and not line.strip().startswith('#'):
+             # We assume this is followed by sys.path.append, which we handle, but we should comment this out if we didn't before
+             # But if we didn't catch it with the 'C:/Users' check, maybe it's another path?
+             # Let's verify. For now, rely on sys.path.append check.
+             pass
 
         # Update save_path if it's the old style
         if 'save_path = os.path.dirname(os.path.abspath(__file__))' in line:
@@ -146,23 +163,25 @@ def fix_file_content(content: str, filepath: str) -> Tuple[str, bool]:
 
     # Additional fixes: update file paths to use save_path/out directory
     # Fix .save_structure(filename='...') to use os.path.join
-    new_content = re.sub(
-        r"\.save_structure\(filename='([^']+)'\)",
-        r".save_structure(filename=os.path.join(save_path, '\1'))",
-        new_content
-    )
-    new_content = re.sub(
-        r'\.save_structure\(filename="([^"]+)"\)',
-        r'.save_structure(filename=os.path.join(save_path, "\1"))',
-        new_content
-    )
+    # Only if save_path is defined in the file
+    if 'save_path' in new_content:
+        new_content = re.sub(
+            r"\.save_structure\(filename='([^']+)'\)",
+            r".save_structure(filename=os.path.join(save_path, '\1'))",
+            new_content
+        )
+        new_content = re.sub(
+            r'\.save_structure\(filename="([^"]+)"\)',
+            r'.save_structure(filename=os.path.join(save_path, "\1"))',
+            new_content
+        )
 
-    # Fix St.save_structure calls without filename parameter
-    new_content = re.sub(
-        r"St\.save_structure\(f'([^']+)'\)",
-        r"St.save_structure(os.path.join(save_path, f'\1'))",
-        new_content
-    )
+        # Fix St.save_structure calls without filename parameter if identifiable string arg
+        new_content = re.sub(
+            r"St\.save_structure\(f'([^']+)'\)",
+            r"St.save_structure(os.path.join(save_path, f'\1'))",
+            new_content
+        )
 
     if new_content != original_content:
         modified = True
@@ -176,21 +195,32 @@ def process_file(filepath: str, dry_run: bool = False) -> bool:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
     except UnicodeDecodeError:
-        # Try with different encoding
-        with open(filepath, 'r', encoding='latin-1') as f:
-            content = f.read()
+        try:
+            with open(filepath, 'r', encoding='latin-1') as f:
+                content = f.read()
+        except Exception as e:
+            print(f"Skipping {filepath}: {e}")
+            return False
 
     # Check if file needs fixing
-    if not has_hardcoded_path(content):
-        # Still check if imports need fixing
-        needs_import_fix = False
+    # Always try to fix imports even if no hardcoded path
+    needs_fix = has_hardcoded_path(content)
+    if not needs_fix:
         for old_pattern in IMPORT_MAP.keys():
             if re.search(old_pattern, content, re.MULTILINE):
-                needs_import_fix = True
+                needs_fix = True
                 break
+    
+    # Also check for reload_modules
+    if 'reload_modules()' in content and not '# reload_modules()' in content:
+        needs_fix = True
+        
+    # Also check for save_path old style
+    if 'save_path = os.path.dirname(os.path.abspath(__file__))' in content:
+        needs_fix = True
 
-        if not needs_import_fix:
-            return False
+    if not needs_fix:
+        return False
 
     # Fix the file
     new_content, modified = fix_file_content(content, filepath)

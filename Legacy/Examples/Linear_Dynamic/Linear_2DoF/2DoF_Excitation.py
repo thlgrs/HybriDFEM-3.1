@@ -4,14 +4,23 @@ import h5py
 import sys
 import pathlib
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Material as mat
-import Surface as surf
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
 
-save_path = os.path.dirname(os.path.abspath(__file__))
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Material as mat
+from Legacy.Objects import Surface as surf
+
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 # Meth = 'CDM'
 # Meth = 'CAA'
@@ -61,4 +70,4 @@ St.set_damping_properties(xsi=0.05, damp_type='RAYLEIGH')
 
 St.solve_dyn_linear(10, 1e-2, lmbda=excitation, Meth=Meth)
 
-St.save_structure(filename='2DoF_Vibration')
+St.save_structure(filename=os.path.join(save_path, '2DoF_Vibration'))

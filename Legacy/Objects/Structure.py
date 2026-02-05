@@ -33,10 +33,10 @@ def custom_warning_format(message, category, filename, lineno, file=None, line=N
 
 warnings.formatwarning = custom_warning_format
 
-import Block as bl
-import ContactFace as cf
-import Material as mat
-import Timoshenko_FE as tfe
+from . import Block as bl
+from . import ContactFace as cf
+from . import Material as mat
+from . import Timoshenko_FE as tfe
 
 reload_modules()   
 
@@ -1781,8 +1781,8 @@ class Structure_2D:
                         + a1_ff @ U_conv[self.dof_free, i - 1] + a2_ff @ V_conv[self.dof_free, i - 1] + a3_ff @ A_conv[
                             self.dof_free, i - 1] \
                         + a1_fd @ U_conv[self.dof_moving, i - 1] + a2_fd @ V_conv[self.dof_moving, i - 1] + a3_fd @ \
-                        A_conv[self.dof_moving, i - 1] \
- \
+                        A_conv[self.dof_moving, i - 1] 
+                
                 for j, disp in enumerate(self.disp_histories):
                     U_conv[self.dof_moving[j], i] = disp[i]
                     V_conv[self.dof_moving[j], i] = (U_conv[self.dof_moving[j], i] - U_conv[
@@ -2141,8 +2141,8 @@ class Structure_2D:
                         + A2[np.ix_(self.dof_free, self.dof_free)] @ V_conv[self.dof_free, i - 1] \
                         + A2[np.ix_(self.dof_free, self.dof_moving)] @ V_conv[self.dof_moving, i - 1] \
                         + A3[np.ix_(self.dof_free, self.dof_free)] @ A_conv[self.dof_free, i - 1] \
-                        + A3[np.ix_(self.dof_free, self.dof_moving)] @ A_conv[self.dof_moving, i - 1] \
- \
+                        + A3[np.ix_(self.dof_free, self.dof_moving)] @ A_conv[self.dof_moving, i - 1] 
+ 
                 counter = 0
                 conv = False
 
@@ -2166,8 +2166,8 @@ class Structure_2D:
 
                     R = P_h_f - self.P_r[self.dof_free] \
                         - A1[np.ix_(self.dof_free, self.dof_free)] @ self.U[self.dof_free] \
-                        - A1[np.ix_(self.dof_free, self.dof_moving)] @ self.U[self.dof_moving] \
- \
+                        - A1[np.ix_(self.dof_free, self.dof_moving)] @ self.U[self.dof_moving] 
+ 
                     if np.linalg.norm(R) < tol:
                         self.commit()
                         U_conv[:, i] = deepcopy(self.U)
@@ -2291,8 +2291,8 @@ class Structure_2D:
 
                     R = P_h_f - self.P_r[self.dof_free] \
                         - A1[np.ix_(self.dof_free, self.dof_free)] @ self.U[self.dof_free] \
-                        - A1[np.ix_(self.dof_free, self.dof_moving)] @ self.U[self.dof_moving] \
- \
+                        - A1[np.ix_(self.dof_free, self.dof_moving)] @ self.U[self.dof_moving] 
+ 
                     if np.linalg.norm(R) < tol:
                         self.commit()
                         U_conv[:, i] = deepcopy(self.U)

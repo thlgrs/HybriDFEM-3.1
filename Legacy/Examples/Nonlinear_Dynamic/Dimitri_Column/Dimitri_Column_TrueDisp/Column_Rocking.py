@@ -13,17 +13,26 @@ def reload():
     importlib.reload(cp)
 
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
 
-import Structure as st
-import Contact as cont
-import ContactPair as cp
-import Surface as surf
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
+
+from Legacy.Objects import Structure as st
+from Legacy.Objects import Contact as cont
+from Legacy.Objects import ContactPair as cp
+from Legacy.Objects import Surface as surf
     
 reload()
 
-save_path = os.path.dirname(os.path.abspath(__file__))
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 # Meth =['HHT', 0.3]
 
@@ -146,6 +155,6 @@ Meth = 'NWK'
 St.solve_dyn_nonlinear(t_end, dt, Meth=Meth, lmbda=None, filename=f't_p={t_p}_a={a}')
 St.plot_structure(scale=1, plot_forces=False, plot_cf=True)
 
-St.save_structure(filename='Dimitri_Column')
+St.save_structure(filename=os.path.join(save_path, 'Dimitri_Column'))
 
 # # plt.plot()

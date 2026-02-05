@@ -11,7 +11,7 @@ import warnings
 import os
 import matplotlib.pyplot as plt
 from copy import deepcopy
-import ContactPair as CP
+from . import ContactPair as CP
 
 
 def custom_warning_format(message, category, filename, lineno, file=None, line=None):

@@ -18,8 +18,14 @@ import pickle
 import importlib
 
 # Folder to access the HybriDFEM files
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
+
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
 
 files = ['Response_NF13_NWK_g=0.5_b=0.25.h5',
          'Response_NF13_SSI_NWK_g=0.5_b=0.25.h5']

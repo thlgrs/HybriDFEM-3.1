@@ -24,8 +24,14 @@ import sys
 import pathlib
 import numpy as np
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
+
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
 
 files = []
 
@@ -41,7 +47,10 @@ for i, file in enumerate(files):
         U_conv = hf['U_conv'][:last_conv]
         Time = hf['Time'][:last_conv]
 
-save_path = os.path.dirname(os.path.abspath(__file__)) + '/Frames'
+# Set up output directory
+save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 if not pathlib.Path(save_path).exists():
     pathlib.Path(save_path).mkdir(exist_ok=True)

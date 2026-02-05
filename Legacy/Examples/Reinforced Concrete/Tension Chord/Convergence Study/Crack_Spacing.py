@@ -6,8 +6,14 @@ import pathlib
 import sys
 import matplotlib as mpl
 
-folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
-sys.path.append(str(folder))
+
+# ============================================================================
+# FIXED: Removed hard-coded paths - use relative imports from Legacy package
+# Original code (kept for reference):
+# folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+# sys.path.append(str(folder))
+# ============================================================================
+
 
 mpl.rcParams['text.usetex'] = True
 mpl.rcParams['font.family'] = 'serif'
@@ -15,7 +21,7 @@ mpl.rcParams['font.serif'] = ['Computer Modern Roman']  # Example of a LaTeX fon
 mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath, amssymb, amsfonts}'
 plt.rcParams['font.size'] = 15
 
-import Structure as st
+from Legacy.Objects import Structure as st
 
 FC = 32
 FCT = 0.3 * FC ** (2 / 3) * 1e6
