@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Aug 14 17:52:48 2024
+
+@author: ibouckaert
+"""
+
+# %% Libraries imports
+import matplotlib as mpl
+
+# To have a nice LaTeX rendering (import LaTeX)
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['font.serif'] = ['Computer Modern Roman']  # Example of a LaTeX font
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath, amssymb, amsfonts}'
+
+import matplotlib.pyplot as plt
+from scipy import linalg
+import pickle
+
+import h5py
+import os
+import sys
+import pathlib
+import numpy as np
+
+folder = pathlib.Path('C:/Users/ibouckaert/OneDrive - UCL/Bureau/UNIF/PhD/Coding/HybriDFEM 3.0/Objects')
+sys.path.append(str(folder))
+
+with open(f'Wallet.pkl', 'rb') as file: 
+    St = pickle.load(file)
+
+file = 'Wall3_rb=0.0_psi=0.01.h5'
+with h5py.File(file, 'r') as hf:
+    #Import what you need
+    last_conv = hf['Last_conv'][()]
+    U_conv = hf['U_conv'][:, last_conv]
+    U = hf['U_conv'][-3]
+    P = hf['P_r_conv'][-3]
+
+plt.figure(None, figsize=(6, 6), dpi=200)
+
+W = .4 * .175 * 10 * 1000
+plt.xlabel('Displacement [mm]')
+plt.ylabel('Load multiplier [-]')
+plt.plot(U * 1000, P / W)
+plt.xlim((0, max(U * 1000)))
+plt.ylim((0, max(P / W) * 1.2))
+plt.grid()
+
+# plt.savefig('C:/Users/ibouckaert/Desktop/Wall3.png')
+    
+St.U = U_conv
+saveto = 'Mech_Wall3.eps'
+St.plot_structure(scale=2000, plot_cf=False, plot_forces=False, plot_supp=False, show=True, save=saveto)
